@@ -9,7 +9,7 @@ namespace Education_DB
 {
     public static class DataReaderExtension
     {
-        public static T ToModel<T>(this IDataReader dataReader) where T : new()
+        public static T ToModel<T>(this IDataReader dataReader) where T : class, new()
         {
             Type type = typeof(T);
 

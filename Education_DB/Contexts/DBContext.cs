@@ -4,14 +4,17 @@ using System.Data.SqlClient;
 
 namespace Education_DB.Contexts
 {
-    public abstract class BaseContext<TModel> where TModel : new()
+    public class DBContext
     {
-        private readonly string connectionString = ConfigurationManager
-                                                 .ConnectionStrings["MyConnection"]
-                                                 .ConnectionString;
-        protected abstract string Sqlexpression { get; }
+        private readonly string connectionString;
 
-        public IEnumerable<TModel> AsEnumerable()
+        public DBContext(string connectionString)
+        {
+            this.connectionString = connectionString;
+        }
+
+        public IEnumerable<TModel> AsEnumerable<TModel>(string Sqlexpression)
+            where TModel : class, new()
         {
             using (SqlConnection connection = new SqlConnection(connectionString))
             {
@@ -20,13 +23,13 @@ namespace Education_DB.Contexts
                 SqlCommand command = new SqlCommand(Sqlexpression, connection);
                 SqlDataReader dataReader = command.ExecuteReader();
 
-               
+
                 while (dataReader.Read())
                 {
-                   yield return dataReader.ToModel<TModel>();
+                    yield return dataReader.ToModel<TModel>();
                 }
 
-                dataReader.Close();               
+                dataReader.Close();
             }
 
         }
