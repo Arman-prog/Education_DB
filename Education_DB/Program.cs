@@ -61,11 +61,12 @@ namespace Education_Database
            }
 
            */
-            string[] columns = { "FirstName", "LastName", "PhoneNumber" };
-            SqlParameter par1 = new SqlParameter("Arsen",System.Data.SqlDbType.NVarChar);
-            SqlParameter par2 = new SqlParameter("Malaxanyan",System.Data.SqlDbType.NVarChar);
-            SqlParameter par3 = new SqlParameter("+37458888",System.Data.SqlDbType.NVarChar);
-            context.InsertToDB("Student",columns, par1,par2,par3);
+          
+            SqlParameter par1 = new SqlParameter("FirstName", "Vardan");
+            SqlParameter par2 = new SqlParameter("LastName", "Mananyan");
+            SqlParameter par3 = new SqlParameter("PhoneNumber", "+37400000");
+            SqlParameter par4 = new SqlParameter("Gender", 1);
+            context.InsertToDB("Student", par1,par2,par3,par4);
 
         }
 

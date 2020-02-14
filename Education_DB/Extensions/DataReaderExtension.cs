@@ -1,7 +1,6 @@
 ﻿using Education_DB.Attributes;
 using System;
 using System.Data;
-using System.Data.SqlClient;
 using System.Linq;
 using System.Reflection;
 
