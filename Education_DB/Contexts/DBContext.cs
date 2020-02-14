@@ -33,7 +33,7 @@ namespace Education_DB.Contexts
 
         }
 
-        public void InsertToDB(string tablename, params SqlParameter[] parameters)
+        public void Insert(string tablename, params SqlParameter[] parameters)
         {
             var sqlparams = GetParameters(parameters);
             string sqlexpression = string.Format("INSERT INTO {0} ({1}) VALUES ({2})",
@@ -50,6 +50,37 @@ namespace Education_DB.Contexts
 
         }
 
+        public void Update(string tablename,string column, string editingdvalue, string newvalue)
+        {           
+            string sqlexpression = string.Format("UPDATE {0} SET {1}='{2}' WHERE {1}='{3}'",
+                 tablename, column, newvalue, editingdvalue);
+
+            using (SqlConnection connection = new SqlConnection(connectionString))
+            {
+                connection.Open();
+                SqlCommand command = new SqlCommand(sqlexpression, connection);
+
+                command.ExecuteNonQuery();
+            }
+
+        }
+
+        public void Delete(string tablename, string column, string value)
+        {
+            string sqlexpression = string.Format("DELETE FROM {0} WHERE {1}='{2}'",
+                 tablename, column, value);
+
+            using (SqlConnection connection = new SqlConnection(connectionString))
+            {
+                connection.Open();
+                SqlCommand command = new SqlCommand(sqlexpression, connection);
+
+                command.ExecuteNonQuery();
+            }
+
+        }
+
+
 
         private (string Column, string Value) GetParameters(SqlParameter[] parameters)
         {
@@ -63,8 +94,7 @@ namespace Education_DB.Contexts
 
             return (columns.ToString().TrimEnd(','), values.ToString().TrimEnd(','));
         }
-
-
+                
 
     }
 }

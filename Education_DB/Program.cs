@@ -62,12 +62,15 @@ namespace Education_Database
 
            */
           
-            SqlParameter par1 = new SqlParameter("FirstName", "Vardan");
-            SqlParameter par2 = new SqlParameter("LastName", "Mananyan");
-            SqlParameter par3 = new SqlParameter("PhoneNumber", "+37400000");
-            SqlParameter par4 = new SqlParameter("Gender", 1);
-            context.InsertToDB("Student", par1,par2,par3,par4);
+            //SqlParameter par1 = new SqlParameter("Name", "Mashtoci");
+            //SqlParameter par2 = new SqlParameter("DestroyDate", new DateTime(2020,12,20));
+            //SqlParameter par3 = new SqlParameter("PhoneNumber", "+37400000");
+            //SqlParameter par4 = new SqlParameter("Gender", 1);
+            //context.Insert("University", par1,par2);
 
+            //context.Update("University","Name", "Slavonakan","Mashtoc");
+
+            //context.Delete("Student", "FirstName", "Edik");
         }
 
 
