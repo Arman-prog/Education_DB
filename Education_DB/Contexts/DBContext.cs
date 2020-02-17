@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Data;
 using System.Data.SqlClient;
 using System.Text;
 
@@ -33,56 +34,68 @@ namespace Education_DB.Contexts
 
         }
 
-        public void Insert(string tablename, params SqlParameter[] parameters)
+        public int Insert(string tablename, params SqlParameter[] parameters)
         {
-            var sqlparams = GetParameters(parameters);
-            string sqlexpression = string.Format("INSERT INTO {0} ({1}) VALUES ({2})",
-                 tablename, sqlparams.Column, sqlparams.Value);
+            var sqlparams = GetInsertParams(parameters);
+            string sqlexpression = string.Format(Queries.insertWithParams, tablename, sqlparams.Column, sqlparams.Value);
 
             using (SqlConnection connection = new SqlConnection(connectionString))
             {
-                connection.Open();
+                if (connection.State != ConnectionState.Open)
+                    connection.Open();
+
                 SqlCommand command = new SqlCommand(sqlexpression, connection);
+                SqlParameter idParam = new SqlParameter
+                {
+                    ParameterName = "@id",
+                    SqlDbType = SqlDbType.Int,
+                    Direction = ParameterDirection.Output
+                };
                 command.Parameters.AddRange(parameters);
+                command.Parameters.Add(idParam);
 
-                command.ExecuteNonQuery();
+                command.ExecuteScalar();
+
+                return (int)idParam.Value;
             }
-
         }
 
-        public void Update(string tablename,string column, string editingdvalue, string newvalue)
-        {           
-            string sqlexpression = string.Format("UPDATE {0} SET {1}='{2}' WHERE {1}='{3}'",
-                 tablename, column, newvalue, editingdvalue);
-
-            using (SqlConnection connection = new SqlConnection(connectionString))
-            {
-                connection.Open();
-                SqlCommand command = new SqlCommand(sqlexpression, connection);
-
-                command.ExecuteNonQuery();
-            }
-
-        }
-
-        public void Delete(string tablename, string column, string value)
+        public void Update(string tablename, int id, params SqlParameter[] parameter)
         {
-            string sqlexpression = string.Format("DELETE FROM {0} WHERE {1}='{2}'",
-                 tablename, column, value);
+            string sqlparams = GetUpdateParams(parameter);
+            string sqlexpression = string.Format(Queries.updateWithParam,
+                 tablename, sqlparams, id);
 
             using (SqlConnection connection = new SqlConnection(connectionString))
             {
-                connection.Open();
-                SqlCommand command = new SqlCommand(sqlexpression, connection);
+                if (connection.State != ConnectionState.Open)
+                    connection.Open();
 
+                SqlCommand command = new SqlCommand(sqlexpression, connection);
+                command.Parameters.AddRange(parameter);
+                command.ExecuteNonQuery();
+            }
+
+        }
+
+        public void Delete(string tablename, SqlParameter parameter)
+        {
+            string sqlexpression = string.Format(Queries.deleteWithParam, tablename, parameter.Value);
+
+            using (SqlConnection connection = new SqlConnection(connectionString))
+            {
+                if (connection.State != ConnectionState.Open)
+                    connection.Open();
+
+                SqlCommand command = new SqlCommand(sqlexpression, connection);
+                command.Parameters.Add(parameter);
                 command.ExecuteNonQuery();
             }
 
         }
 
 
-
-        private (string Column, string Value) GetParameters(SqlParameter[] parameters)
+        private (string Column, string Value) GetInsertParams(SqlParameter[] parameters)
         {
             StringBuilder columns = new StringBuilder();
             StringBuilder values = new StringBuilder();
@@ -94,7 +107,19 @@ namespace Education_DB.Contexts
 
             return (columns.ToString().TrimEnd(','), values.ToString().TrimEnd(','));
         }
-                
+
+        private string GetUpdateParams(SqlParameter[] parameters)
+        {
+            StringBuilder updatevalues = new StringBuilder();
+            foreach (var parameter in parameters)
+            {
+
+                updatevalues.Append("[").Append(parameter.ParameterName).Append("]")
+                    .Append("=").Append("@").Append(parameter.ParameterName).Append(",");
+            }
+
+            return updatevalues.ToString().TrimEnd(',');
+        }
 
     }
 }

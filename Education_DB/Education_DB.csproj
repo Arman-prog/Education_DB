@@ -49,6 +49,7 @@
     <Compile Include="Attributes\KeyAttribute.cs" />
     <Compile Include="Attributes\TableNameAttribute.cs" />
     <Compile Include="Contexts\DBContext.cs" />
+    <Compile Include="Contexts\Queries.cs" />
     <Compile Include="Models\Address.cs" />
     <Compile Include="Models\Student.cs" />
     <Compile Include="Models\Teacher.cs" />
